@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: service-a
-        image: <your-dockerhub>/service-a
+        image: service-a:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
