@@ -7,18 +7,12 @@ pipeline {
 
   stages {
 
-    stage('Clone Repo') {
-      steps {
-        git 'https://github.com/Rishitha2707/3-tier-architecture.git'
-      }
-    }
-
     stage('Build Docker Images') {
       steps {
         sh '''
-        docker build -t service-a:latest ./service-a
-        docker build -t service-b:latest ./service-b
-        docker build -t service-c:latest ./service-c
+        docker build -t service-a ./service-a
+        docker build -t service-b ./service-b
+        docker build -t service-c ./service-c
         '''
       }
     }
@@ -26,38 +20,23 @@ pipeline {
     stage('Import Images into K3s') {
       steps {
         sh '''
-        docker save service-a:latest | k3s ctr images import -
-        docker save service-b:latest | k3s ctr images import -
-        docker save service-c:latest | k3s ctr images import -
+        docker save service-a | k3s ctr images import -
+        docker save service-b | k3s ctr images import -
+        docker save service-c | k3s ctr images import -
         '''
       }
     }
 
-    stage('Deploy to Kubernetes') {
+    stage('Deploy') {
       steps {
-        sh '''
-        kubectl apply -f k8s/
-        '''
+        sh 'kubectl apply -f k8s/'
       }
     }
 
-    stage('Verify Deployment') {
+    stage('Verify') {
       steps {
-        sh '''
-        kubectl get pods
-        kubectl get svc
-        '''
+        sh 'kubectl get pods'
       }
-    }
-
-  }
-
-  post {
-    success {
-      echo '✅ Deployment Successful!'
-    }
-    failure {
-      echo '❌ Deployment Failed!'
     }
   }
 }
