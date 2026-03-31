@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: service-b
-        image: <your-dockerhub>/service-b
+        image: service-b:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5001
