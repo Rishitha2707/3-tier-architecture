@@ -17,17 +17,7 @@ pipeline {
       }
     }
 
-    stage('Import Images into K3s') {
-      steps {
-        sh '''
-        docker save service-a | k3s ctr images import -
-        docker save service-b | k3s ctr images import -
-        docker save service-c | k3s ctr images import -
-        '''
-      }
-    }
-
-    stage('Deploy') {
+    stage('Deploy to Kubernetes') {
       steps {
         sh 'kubectl apply -f k8s/'
       }
@@ -35,7 +25,10 @@ pipeline {
 
     stage('Verify') {
       steps {
-        sh 'kubectl get pods'
+        sh '''
+        kubectl get pods
+        kubectl get svc
+        '''
       }
     }
   }
