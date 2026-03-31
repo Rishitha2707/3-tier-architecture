@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: service-c
-        image: <your-dockerhub>/service-c
+        image: service-c:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5002
