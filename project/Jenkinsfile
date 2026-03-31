@@ -2,19 +2,30 @@ pipeline {
   agent any
 
   stages {
-    stage('Build images') {
+
+    stage('Clone') {
       steps {
-        sh 'docker build -t <your-dockerhub>/service-a ./service-a'
-        sh 'docker build -t <your-dockerhub>/service-b ./service-b'
-        sh 'docker build -t <your-dockerhub>/service-c ./service-c'
+        git 'https://github.com/your-repo/project.git'
       }
     }
 
-    stage('Push Images') {
+    stage('Build Images') {
       steps {
-        sh 'docker push <your-dockerhub>/service-a'
-        sh 'docker push <your-dockerhub>/service-b'
-        sh 'docker push <your-dockerhub>/service-c'
+        sh '''
+        docker build -t service-a ./service-a
+        docker build -t service-b ./service-b
+        docker build -t service-c ./service-c
+        '''
+      }
+    }
+
+    stage('Import to K3s') {
+      steps {
+        sh '''
+        docker save service-a | sudo k3s ctr images import -
+        docker save service-b | sudo k3s ctr images import -
+        docker save service-c | sudo k3s ctr images import -
+        '''
       }
     }
 
