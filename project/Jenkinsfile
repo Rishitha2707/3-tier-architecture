@@ -1,0 +1,27 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Build images') {
+      steps {
+        sh 'docker build -t <your-dockerhub>/service-a ./service-a'
+        sh 'docker build -t <your-dockerhub>/service-b ./service-b'
+        sh 'docker build -t <your-dockerhub>/service-c ./service-c'
+      }
+    }
+
+    stage('Push Images') {
+      steps {
+        sh 'docker push <your-dockerhub>/service-a'
+        sh 'docker push <your-dockerhub>/service-b'
+        sh 'docker push <your-dockerhub>/service-c'
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        sh 'kubectl apply -f k8s/'
+      }
+    }
+  }
+}
